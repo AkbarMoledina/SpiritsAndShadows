@@ -108,8 +108,10 @@ public class Room {
             if (option == 1) {
                 Inventory inventory = Inventory.getInstance();
                 inventory.addItem(item);
-                inventory.removeItem(inventory.getWeapons().getFirst());
-
+                Weapon oldWeapon = inventory.getWeapon();
+                this.item = oldWeapon;
+                this.searched = false;
+                inventory.removeItem(oldWeapon);
                 System.out.println("You picked up a " + item.getName());
             }
         } else {

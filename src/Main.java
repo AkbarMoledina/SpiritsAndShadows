@@ -5,6 +5,5 @@ public class Main {
 
         Player player = GameLogic.startGame();
         GameLogic.gameLoop(player);
-
     }
 }

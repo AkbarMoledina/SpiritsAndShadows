@@ -23,14 +23,14 @@ public class Inventory {
         return Collections.unmodifiableList(items);
     }
 
-    public List<Weapon> getWeapons() {
+    public Weapon getWeapon() {
         List<Weapon> weapons = new ArrayList<>();
         for (Item item : items) {
             if (item instanceof Weapon) {
                 weapons.add((Weapon) item);
             }
         }
-        return weapons;
+        return weapons.getFirst();
     }
 
     public void addItem(Item item) {
