@@ -1,94 +1,186 @@
+import java.util.List;
+
 public class Story {
 
-    public static Room setUpWorld() {
-        Weapon battleaxe = new Weapon("Battleaxe", Weapon.WeaponType.TWO_HANDED, 150, 0.6);
-        Weapon scimitar = new Weapon("Scimitar", Weapon.WeaponType.ONE_HANDED, 95, 1.5);
+    public static Area setUpWorld(Player player) {
+
+        // Weapons/items
+        Weapon duelbook = new Weapon("Duelbook", 1.5, 1.2);
+        Weapon spellbook = new Weapon("Spellbook", 1.2, 1.5);
+        Weapon battlestaff = new Weapon("Battlestaff", 1.8, 1.2);
+        Weapon spellstaff = new Weapon("Spellstaff", 1.2, 1.8);
         Item lockpick = new Item("Lockpick");
         Item heathPotion = new Item("Health Potion");
+        Item manaPotion = new Item("Mana Potion");
+
+        // Spells
+        // add logic to support this
+        Spell flameCoat = new Spell("Flame coat", "Engulf yourself living flames that hunt enemies that deal damage to you", 30, 0, 4, 100, 30, Spell.spellType.PYRO, null);
+        LearnSpellEvent learnFlameCoat = new LearnSpellEvent(flameCoat);
+
+        List<SpellEffect> crystalCoffinEffects = List.of(new SpellEffect(SpellEffect.spellEffect.STUN, 0, 3, 100));
+        Spell crystalCoffin = new Spell("Crystal coffin", "Buries your enemy in a large rectangle of ice", 0, 0, 6, 60, 45, Spell.spellType.ICE, crystalCoffinEffects);
+        LearnSpellEvent learnCrystalCoffin = new LearnSpellEvent(crystalCoffin);
+
+        List<SpellEffect> lightningBurstEffects = List.of(new SpellEffect(SpellEffect.spellEffect.MANA_DMG, 20, 0, 100));
+        Spell lightningBurst = new Spell("Lightning burst", "Unleash a burst of lightning, damaging the enemy's health and mana", 30, 0, 1, 80, 10, Spell.spellType.SHOCK, lightningBurstEffects);
+        LearnSpellEvent learnLightingBurst = new LearnSpellEvent(lightningBurst);
+
+        List<SpellEffect> lightningStormEffects = List.of(new SpellEffect(SpellEffect.spellEffect.MANA_DMG, 50, 0, 100));
+        Spell lightningStorm = new Spell("Lightning storm", "Conjure a fully fledged lightning storm, dealing damage to your enemy's health and massive damage to their mana", 50, 0, 3, 90, 25, Spell.spellType.SHOCK, lightningStormEffects);
+        LearnSpellEvent learnLightningStorm = new LearnSpellEvent(lightningStorm);
+
+        List<SpellEffect> stoneskinEffects = List.of(new SpellEffect(SpellEffect.spellEffect.DMG_MOD, 0.60, 3, 100));
+        Spell stoneskin = new Spell("Stoneskin", "Earthy material from the surroundings binds to your skin, reducing incoming damage by 40% for 3 turns", 0, 0, 4, 100, 20, Spell.spellType.EARTH, stoneskinEffects);
+        LearnSpellEvent learnStoneskin = new LearnSpellEvent(stoneskin);
+
+        Spell gaiasWrath = new Spell("Gaia's wrath", "", 60, 0, 3, 90, 40, Spell.spellType.EARTH, null);
+        LearnSpellEvent learnGaiasWrath = new LearnSpellEvent(gaiasWrath);
+
+        List<SpellEffect> sanguinePactEffects = List.of(new SpellEffect(SpellEffect.spellEffect.SPELL_DMG, 1.6, 3, 100), new SpellEffect(SpellEffect.spellEffect.HP_CHANGE, -25, 0, 100));
+        Spell sanguinePact = new Spell("Sanguine pact", "Make a sacrifice for a portion of your current health to massively increase your spell power.", 0 , 0, 5, 100, 0, Spell.spellType.BLOOD, sanguinePactEffects);
+        LearnSpellEvent learnSanquinePact = new LearnSpellEvent(sanguinePact);
+
+        List<SpellEffect> bloodThirstEffects = List.of(new SpellEffect(SpellEffect.spellEffect.HP_CHANGE, 25, 0, 100));
+        Spell bloodThirst = new Spell("Blood thirst", "Create a brief channel between yourself and your enemy, dragging their lifeforce into your own", 25, 0, 3, 80, 30, Spell.spellType.BLOOD, bloodThirstEffects);
+        LearnSpellEvent learnBloodthirst = new LearnSpellEvent(bloodThirst);
+
+        List<SpellEffect> runePrisonEffects = List.of(new SpellEffect(SpellEffect.spellEffect.STUN, 0, 2, 100));
+        Spell runePrison = new Spell("Rune prison", "Damage and stun the enemy for 2 turn by trapping them in pure mana.", 10, 10, 4, 95, 65, Spell.spellType.SPIRIT, runePrisonEffects);
+        LearnSpellEvent learnRunePrison = new LearnSpellEvent(runePrison);
+
+        List<SpellEffect> ethrealMendEffects = List.of(new SpellEffect(SpellEffect.spellEffect.HP_CHANGE, 25, 3, 100), new SpellEffect(SpellEffect.spellEffect.DMG_MOD, 0.75, 3, 100));
+        Spell etherealMend = new Spell("Ethreal mend", "Call upon a spirit to heal you over three turns whilst protecting you from further attacks", 0, 0, 5, 100, 50, Spell.spellType.SPIRIT, ethrealMendEffects);
+        LearnSpellEvent learnEthrealMend = new LearnSpellEvent(etherealMend);
+
+        List<SpellEffect> siphonSoulEffects = List.of(new SpellEffect(SpellEffect.spellEffect.HP_CHANGE, 40, 1, 100), new SpellEffect(SpellEffect.spellEffect.DMG_MOD, 0.60, 1, 100));
+        Spell siphonSoul = new Spell("Siphon soul", "Siphons the enemy's energy, healing you and causing them to deal reduced damage with their next attack.", 40, 0, 3, 100, 30, Spell.spellType.SHADOW, siphonSoulEffects);
+        LearnSpellEvent learnSiphonSoul = new LearnSpellEvent(siphonSoul);
+
+        Spell phantomCleave = new Spell("Phantom cleave", "Unleash an arc of spirit energy, dealing massive percent health damage.", 10, 22.5, 3, 95, 65, Spell.spellType.SHADOW, null);
+        LearnSpellEvent learnPhantomCleave = new LearnSpellEvent(phantomCleave);
 
 
-        Room room00 = new Room(0,0, null, """
-                You find yourself in the scorching heat. Beads of sweat drip down your forehead. The south and west appear to be blocked by invisible walls, as if you are in a game. The only item in your possession is your trusty shortsword in your right hand.
+        // Enemies
+        Enemy darkMage = new Enemy("Dark Mage", Enemy.enemyType.SHADOW, 100, 150);
+        Battle fightDarkMage = new Battle(player, darkMage);
+        BattleEvent fightDarkMageEvent = new BattleEvent(fightDarkMage, darkMage);
+
+        Enemy soulboundKnight = new Enemy("Soulbound Knight", Enemy.enemyType.SPIRIT, 200, 200);
+        Battle fightSoulboundKnight = new Battle(player, soulboundKnight);
+        BattleEvent fightSoulboundKnightEvent = new BattleEvent(fightSoulboundKnight, soulboundKnight);
+
+        Enemy dreadRevenant = new Enemy("Dread Revenant", Enemy.enemyType.SHADOW, 200, 200);
+        Battle fightdreadRevenant = new Battle(player, dreadRevenant);
+        BattleEvent fightdreadRevenantEvent = new BattleEvent(fightdreadRevenant, dreadRevenant);
+
+        Enemy blazehound = new Enemy("Blazehound", Enemy.enemyType.PYRO, 100, 100);
+        Battle fightBlazehound = new Battle(player, blazehound);
+        BattleEvent fightBlazehoundEvent = new BattleEvent(fightBlazehound, blazehound);
+
+        Enemy frostDrake = new Enemy("Frost Drake", Enemy.enemyType.ICE, 150, 200);
+        Battle fightFrostDrake = new Battle(player, frostDrake);
+        BattleEvent fightFrostDrakeEvent = new BattleEvent(fightFrostDrake, frostDrake);
+
+        // Final boss, switches between Shadow type Umbravex and Spirit type Veloria
+        Enemy umbravex = new Enemy("Umbravex", Enemy.enemyType.SHADOW, 1000, 250);
+        Battle fightUmbravex = new Battle(player, umbravex);
+        BattleEvent fightUmbravexEvent = new BattleEvent(fightUmbravex, umbravex);
+
+
+        Area area00 = new Area(0,0, null, """
+                A scorched stretch of barren land. Beads of sweat drip down your forehead which you wipe away with the sleeve of your robe.
                 """);
-        Room room01 = new Room(0, 1, battleaxe, "01");
-        Room room02 = new Room(0, 2, null, "02");
-        Room room03 = new Room(0, 3, null, "03");
-        Room room10 = new Room(1, 0, null, "10");
-        Room room11 = new Room(1, 1, null, "The temperature is noticeably cooler than the areas to the south and west. ");
-        Room room12 = new Room(1, 2, lockpick, "12");
-        Room room13 = new Room(1, 3, heathPotion, "13");
-        Room room20 = new Room(2, 0, lockpick, "20");
-        Room room21 = new Room(2, 1, null, "21");
-        Room room22 = new Room(2, 2, null, "22");
-        Room room23 = new Room(2, 3, null, "23");
-        Room room30 = new Room(3, 0, null, "30");
-        Room room31 = new Room(3, 1, scimitar, "31");
-        Room room32 = new Room(3, 2, null, "32");
-        Room room33 = new Room(3, 3, null, "33");
-        Room exit = new Room(4, 4, null, "You have completed the game!");
+        Area area01 = new Area(0, 1, battlestaff, "You enter a narrow canyon carved by time. The air is dry and flames flicker through the charred crevices in the stone.");
+        Area area02 = new Area(0, 2, null, "02");
+        Area area03 = new Area(0, 3, null, "The light here bends strangely. Trees cast no shadows, yet darkness creeps over every surface. The silent thick air is almost suffocating.");
+        Area area10 = new Area(1, 0, null, "A warm breeze brushes through your hair, yet the sun still feels uncomfortable as it radiates onto your skin.");
+        Area area11 = new Area(1, 1, null, "The temperature is noticeably cooler than the areas to the south and west. ");
+        Area area12 = new Area(1, 2, lockpick, "12");
+        Area area13 = new Area(1, 3, heathPotion, "13");
+        Area area20 = new Area(2, 0, lockpick, "20");
+        Area area21 = new Area(2, 1, null, "21");
+        Area area22 = new Area(2, 2, null, "22");
+        Area area23 = new Area(2, 3, null, "23");
+        Area area30 = new Area(3, 0, null, "You are fighting against the wind as you traverse through the area.");
+        Area area31 = new Area(3, 1, spellbook, "31");
+        Area area32 = new Area(3, 2, null, "32");
+        Area area33 = new Area(3, 3, null, "33");
+        Area exit = new Area(4, 4, null, "You have completed the game!");
 
 
-        room00.setExits("North", room10);
-        room00.setExits("East", room01);
+        area00.setExits("North", area01);
+        area00.setExits("East", area10);
+        area00.setSearchEvent(learnStoneskin);
 
-        room01.setExits("East", room02);
-        room01.setExits("West", room00);
+        area10.setExits("East", area20);
+        area10.setExits("West", area00);
+        area10.setSearchEvent(learnLightingBurst);
 
-        room02.setExits("North", room12);
-        room02.setExits("East", room03);
-        room02.setExits("West", room01);
+        area20.setExits("North", area21);
+        area20.setExits("East", area30);
+        area20.setExits("West", area10);
 
-        room03.setExits("North", room13);
-        room03.setExits("West", room02);
+        area30.setExits("North", area31);
+        area30.setExits("West", area20);
+        area30.setEnterEvent(fightdreadRevenantEvent);
+        area30.setSearchEvent(learnPhantomCleave);
 
-        room10.setExits("North", room20);
-        room10.setExits("East", room11);
-        room10.setExits("South", room00);
+        area01.setExits("North", area02);
+        area01.setExits("East", area11);
+        area01.setExits("South", area00);
 
-        room11.setExits("North", room21);
-        room11.setExits("West", room10);
+        area11.setExits("North", area12);
+        area11.setExits("West", area01);
+        area11.setEnterEvent(fightBlazehoundEvent);
+        area11.setSearchEvent(learnFlameCoat);
 
-        room12.setExits("East", room13);
-        room12.setExits("South", room02);
+        area21.setExits("East", area31);
+        area21.setExits("South", area20);
 
-        room13.setExits("North", room23);
-        room13.setExits("South", room03);
-        room13.setExits("West", room12);
+        area31.setExits("North", area32);
+        area31.setExits("South", area30);
+        area31.setExits("West", area21);
+        area31.setEnterEvent(fightDarkMageEvent);
+        area31.setSearchEvent(learnRunePrison);
 
         //search: lockpick
-        room20.setExits("North", room30);
-        room20.setExits("East", room21);
-        room20.setExits("South", room10);
+        area02.setExits("North", area03);
+        area02.setExits("East", area12);
+        area02.setExits("South", area01);
 
-        room21.setExits("North", room31);
-        room21.setExits("South", room11);
-        room21.setExits("West", room20);
+        area12.setExits("North", area13);
+        area12.setExits("South", area11);
+        area12.setExits("West", area02);
 
         //boss room
-        room22.setExits("North", room32);
-        room22.setExits("East", room23);
+        area22.setExits("North", area23);
+        area22.setExits("East", area32);
+        area22.setEnterEvent(fightUmbravexEvent);
 
-        room23.setExits("North", room33);
-        room23.setExits("South", room13);
-        room23.setExits("West", room22);
+        area32.setExits("North", area33);
+        area32.setExits("South", area31);
+        area32.setExits("West", area22);
 
-        //battle
-        room30.setExits("East", room31);
-        room30.setExits("South", room20);
+        area03.setExits("East", area13);
+        area03.setExits("South", area02);
+        area03.setEnterEvent(fightSoulboundKnightEvent);
+        area03.setSearchEvent(learnEthrealMend);
 
-        room31.setExits("East", room32);
-        room31.setExits("South", room21);
-        room31.setExits("West", room30);
+        area13.setExits("East", area23);
+        area13.setExits("South", area12);
+        area13.setExits("West", area03);
+        area13.setEnterEvent(fightFrostDrakeEvent);
 
-        room32.setExits("East", room33);
-        room32.setExits("South", room22);
-        room32.setExits("West", room31);
+        area23.setExits("East", area33);
+        area23.setExits("South", area22);
+        area23.setExits("West", area13);
 
         //Exit
-        room33.setExits("South", room23);
-        room33.setExits("East", exit);
-        room33.setExits("West", room32);
+        area33.setExits("South", area32);
+        area33.setExits("East", exit);
+        area33.setExits("West", area23);
         
-        return room00;
+        return area00;
     }
 }

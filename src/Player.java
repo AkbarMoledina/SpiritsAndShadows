@@ -1,46 +1,68 @@
-import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 public class Player {
 
     private String name;
     private String charClass;
-    private int level;
-    private int maxHP;
-    private int maxStamina;
-    private int currentHP;
-    private int currentStamina;
+    private double maxHP;
+    private double maxMana;
+    private double currentHP;
+    private double currentMana;
+    private double attackspeed;
+    private Spell basicAttack;
+    private List<Spell> knownSpells;
+    private static final int MAX_SPELLS = 5;
+    private List<SpellEffect> activeEffects = new ArrayList<>();
 
 
     public Player(String name, String charClass) {
         this.name = name;
         this.charClass = charClass;
-        this.level = 1;
         setBaseStats(charClass);
         this.currentHP = this.maxHP;
-        this.currentStamina = this.maxStamina;
+        this.currentMana = this.maxMana;
+        this.basicAttack = new Spell("Basic attack", "An attack with no cooldown which deals damage based on your attack speed.", 20 * attackspeed, 0, 0, 95, 0, null, null);
+        this.knownSpells = new ArrayList<>();
+        setStartingAbilities();
     }
 
     private void setBaseStats(String charClass) {
         switch (charClass.toLowerCase()) {
-            case "assassin":
-                maxHP = 100;
-                maxStamina = 200;
-                break;
-            case "fighter":
-                maxHP = 150;
-                maxStamina = 150;
-                break;
-            case "tank":
+            case "battlemage":
                 maxHP = 200;
-                maxStamina = 100;
+                maxMana = 100;
+                attackspeed = 2;
+                break;
+            case "spellcaster":
+                maxHP = 150;
+                maxMana = 200;
+                attackspeed = 1.2;
+                break;
+            case "utility":
+                maxHP = 100;
+                maxMana = 300;
+                attackspeed = 1;
                 break;
         }
+    }
+
+    private void setStartingAbilities() {
+
+        Spell iceSpike = new Spell("Ice spike", "Launch a low mana cost but inaccurate spear of ice.", 50, 0, 1, 65, 10, Spell.spellType.ICE, null);
+
+        List<SpellEffect> flameboltEffects = List.of(new SpellEffect(SpellEffect.spellEffect.DOT, 10, 2, 30));
+        Spell flamebolt = new Spell("Flamebolt", "A blast of fire with a chance to burn, that also deals a small amount of percent health damage.", 25, 5, 2, 90, 30, Spell.spellType.PYRO, flameboltEffects);
+
+        knownSpells.add(iceSpike);
+        knownSpells.add(flamebolt);
     }
 
     public static String askName() {
         String name;
         int nameOption;
-        GameLogic.printEmptyLines();
+        GameLogic.printEmptyLines(1);
         do {
             System.out.println("Hello there, what is your name?");
             name = GameLogic.scanner.nextLine();
@@ -54,35 +76,110 @@ public class Player {
     public static String askClass() {
         String charClass = "";
         int charClassOption;
-        GameLogic.printEmptyLines();
-        System.out.println("What class are you?\n1. Fighter\n2. Assassin\n3. Tank\n");
+        GameLogic.printEmptyLines(1);
+        System.out.println("What class are you?\n1. Battlemage\n2. Spellcaster\n3. Utility\n");
         charClassOption = GameLogic.promptAndReadInt(3);
         switch (charClassOption) {
             case 1:
-                charClass = "Fighter";
+                charClass = "Battlemage";
                 break;
             case 2:
-                charClass = "Assassin";
+                charClass = "Spellcaster";
                 break;
             case 3:
-                charClass = "Tank";
+                charClass = "Utility";
                 break;
         }
         return charClass;
     }
 
+    public void learnSpell(Spell newSpell) {
+        if (knownSpells.size() >= MAX_SPELLS) {
+            System.out.println("You cannot have more than 5 spells. Pick a spell to be forgotten, to learn " + newSpell.getName() + "!");
 
-    public void changeHP(int amount) {
+            boolean learningSpell = true;
+            while (learningSpell) {
+                int count = 1;
+                for (Spell spell : knownSpells) {
+                    System.out.println(count + ". " + spell);
+                    count++;
+                }
+                System.out.println(count + ". Do not learn " + newSpell.getName());
+
+                int choice = GameLogic.promptAndReadInt(6);
+                if (choice != 6) {
+                    System.out.println("Are you sure you'd like to forget " + knownSpells.get(choice - 1).getName() + " to learn " + newSpell.getName() + "?\n1. Yes\n2. No");
+                    if (GameLogic.promptAndReadInt(2) == 1) {
+                        knownSpells.set(choice - 1, newSpell);
+                        System.out.println("You forgot " + knownSpells.get(choice -1).getName() + " and learnt " + newSpell.getName() + "!");
+                        learningSpell = false;
+                    }
+                }
+                else {
+                    System.out.println("Are you sure you don't want to learn " + newSpell.getName() + "?\n1. Yes\n2. No");
+                    if (GameLogic.promptAndReadInt(2) == 1) {
+                        System.out.println("You did not learn " + newSpell.getName());
+                        learningSpell = false;
+                    }
+                }
+            }
+        }
+        else {
+            System.out.println("You learnt " + newSpell.getName() + "!");
+            knownSpells.add(newSpell);
+        }
+    }
+
+    public void changeHP(double amount) {
         currentHP += amount;
         if (currentHP < 0) currentHP = 0;
         if (currentHP > maxHP) currentHP = maxHP;
     }
 
-    public void changeStamina(int amount) {
-        currentStamina += amount;
-        if (currentStamina < 0) currentStamina = 0;
-        if (currentStamina > maxStamina) currentStamina = maxStamina;
+    public void changeMana(double amount) {
+        currentMana += amount;
+        if (currentMana < 0) currentMana = 0;
+        if (currentMana > maxMana) currentMana = maxMana;
     }
+
+    public void displayStats() {
+        System.out.println("Player: " + name);
+        System.out.println("HP: " + currentHP + "/" + maxHP);
+        System.out.println("Mana: " + currentMana + "/" + maxMana);
+    }
+
+    public void addEffect(SpellEffect effect) {
+        activeEffects.add(effect);
+    }
+
+    public void updateEffects() {
+        Iterator<SpellEffect> iterator = activeEffects.iterator();
+        while (iterator.hasNext()) {
+            SpellEffect effect = iterator.next();
+            effect.reduceDuration();
+            if (effect.isExpired()) {
+                System.out.println(effect.getType() + " has worn off");
+                iterator.remove();
+            }
+        }
+    }
+
+    public boolean hasEffect(SpellEffect.spellEffect type) {
+        for (SpellEffect effect : activeEffects) {
+            if (effect.getType() == type) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public double getEffectValue(SpellEffect.spellEffect type) {
+        return activeEffects.stream()
+                .filter(e -> e.getType() == type)
+                .mapToDouble(SpellEffect::getValue)
+                .sum();
+    }
+
 
     public String getName() {
         return name;
@@ -92,24 +189,21 @@ public class Player {
         return charClass;
     }
 
-    public int getMaxHP() {
-        return maxHP;
-    }
+    public double getMaxHP() { return maxHP; }
 
-    public int getMaxStamina() {
-        return maxStamina;
-    }
-
-    public int getCurrentHP() {
+    public double getCurrentHP() {
         return currentHP;
     }
 
-    public int getCurrentStamina() {
-        return currentStamina;
+    public double getCurrentMana() {
+        return currentMana;
     }
 
-    public void displayStats() {
-        System.out.println("HP: " + currentHP + "/" + maxHP);
-        System.out.println("Stamina: " + currentStamina + "/" + maxStamina);
+    public Spell getBasicAttack() {
+        return basicAttack;
+    }
+
+    public List<Spell> getKnownSpells() {
+        return knownSpells;
     }
 }

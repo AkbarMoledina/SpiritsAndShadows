@@ -19,13 +19,14 @@ public class GameLogic {
 
     public static void gameLoop(Player player) {
         boolean isRunning = true;
-        Room currentRoom = Story.setUpWorld();
+        Area currentArea = Story.setUpWorld(player);
 
         while (isRunning) {
-            currentRoom.describe();
-            currentRoom.options(player);
-            int choice = promptAndReadInt(currentRoom.getNumberOfOptions());
-            currentRoom = currentRoom.processChoice(choice, player);
+            currentArea.describe();
+            currentArea.onEnter(player);
+            currentArea.options();
+            int choice = promptAndReadInt(currentArea.getNumberOfOptions());
+            currentArea = currentArea.processChoice(choice, player);
 //            System.out.println(currentRoom);
 
             if (player.getCurrentHP() <= 0) {
@@ -56,12 +57,13 @@ public class GameLogic {
             }
         }
         while (input < 1 || input > options);
+        printEmptyLines(1);
 
         return input;
     }
 
-    public static void printEmptyLines() {
-        for (int i = 0; i < 2; i++) {
+    public static void printEmptyLines(int lines) {
+        for (int i = 0; i < lines; i++) {
             System.out.println();
         }
     }

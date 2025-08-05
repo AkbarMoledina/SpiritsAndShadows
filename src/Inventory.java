@@ -1,7 +1,5 @@
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class Inventory {
 
@@ -46,22 +44,33 @@ public class Inventory {
 
     public void startingInventory() {
         Inventory inventory = Inventory.getInstance();
-        Weapon sword = new Weapon("Sword", Weapon.WeaponType.ONE_HANDED, 100, 1.0);
+        Weapon sword = new Weapon("Wand", 1.2, 1.2);
         inventory.addItem(sword);
     }
 
     public void displayInventory() {
-        GameLogic.printEmptyLines();
+        GameLogic.printEmptyLines(1);
+
+        items.sort(Comparator.comparing(Item::getName));
+        items.stream().collect(Collectors.groupingBy(Item::getName));
+
         for(Item item: items) {
-            System.out.println("Name: " + item.getName());
 
             if (item instanceof Weapon) {
                 Weapon weapon = (Weapon) item;
-                System.out.println("Weapon type: " + weapon.getItemType());
-                System.out.println("Attack damage: " + weapon.getAtkDmg());
-                System.out.println("Attack speed: " + weapon.getAtkSpd());
+                System.out.println("Name: " + weapon.getName());
+                System.out.println("Basic attack damage: " + weapon.getBasicDmg());
+                System.out.println("Spell damage: " + weapon.getSpellDmg());
+                System.out.println();
+                break;
             }
-            System.out.println();
+        }
+        Map<String, Long> grouped = items.stream().filter(item -> !(item instanceof Weapon)).collect(Collectors.groupingBy(Item::getName, Collectors.counting()));
+        List<String> sortedNames = new ArrayList<>(grouped.keySet());
+        Collections.sort(sortedNames);
+
+        for (String name : sortedNames) {
+            System.out.println(name + (grouped.get(name) > 1 ? " x" + grouped.get(name) : ""));
         }
     }
 
