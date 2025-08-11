@@ -6,11 +6,11 @@ public class Battle {
 
     public void startBattle(Player player, Enemy enemy) {
         boolean isBattling = true;
-        Spell basicAttack = new Spell("Basic attack","The enemy's basic attack",40,0,0,95,0,null, null);
+        Spell basicAttack = new Spell("Basic attack","The enemy's basic attack",30,0,0,95,0,null, null);
         enemy.setBasicAttack(basicAttack);
+        System.out.println("You are battling " + enemy.getName() + "\n");
 
         while (isBattling) {
-            System.out.println("You are battling " + enemy.getName() + "\n");
             player.displayStats();
             enemy.displayStats();
 
@@ -21,11 +21,12 @@ public class Battle {
             }
             isBattling = checkPlayerAndEnemyHP(player, enemy);
             if (!isBattling) break;
-            double damage = enemy.getBasicAttack().calculateDamageToPlayer(player, enemy);
-            System.out.println("The enemy's basic attack did " + damage + " to you!");
-
+            enemy.getBasicAttack().calculateDamageToPlayer(player, enemy);
             player.updateEffects();
             enemy.updateEffects();
+            ///
+            isBattling = checkPlayerAndEnemyHP(player, enemy);
+            if (!isBattling) break;
         }
     }
 
@@ -35,9 +36,12 @@ public class Battle {
         option++;
 
         for (Spell spell : player.getKnownSpells()) {
-            System.out.printf("\n%d. " + spell.getName(), option);
-            option++;
+            if (player.getCurrentMana() >= spell.getManaCost()) {
+                System.out.printf("\n%d. " + spell.getName(), option);
+                option++;
+            }
         }
+        System.out.println();
         return option;
     }
 
@@ -45,8 +49,7 @@ public class Battle {
         int index = 1;
 
         if (index == choice) {
-            double damage = player.getBasicAttack().calculateDamageToEnemy(player, enemy);
-            System.out.println("Your basic attack did " + damage + " damage!");
+            player.getBasicAttack().calculateDamageToEnemy(player, enemy);
             return true;
         }
         index++;
@@ -54,7 +57,6 @@ public class Battle {
         for (Spell spell : player.getKnownSpells()) {
             if (index == choice) {
                 double damage = spell.calculateDamageToEnemy(player, enemy);
-                System.out.println("Your spell did " + damage + " damage!");
                 return true;
             }
             index++;

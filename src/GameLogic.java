@@ -24,15 +24,12 @@ public class GameLogic {
         while (isRunning) {
             currentArea.describe();
             currentArea.onEnter(player);
+            isRunning = checkAlive(player);
+            if (!isRunning) break;
             currentArea.options();
             int choice = promptAndReadInt(currentArea.getNumberOfOptions());
             currentArea = currentArea.processChoice(choice, player);
 //            System.out.println(currentRoom);
-
-            if (player.getCurrentHP() <= 0) {
-                System.out.println("You have died");
-                isRunning = false;
-            }
         }
     }
 
@@ -60,6 +57,14 @@ public class GameLogic {
         printEmptyLines(1);
 
         return input;
+    }
+
+    public static boolean checkAlive(Player player) {
+        if (player.getCurrentHP() <= 0) {
+            System.out.println("\nYou have died...");
+            return false;
+        }
+        return true;
     }
 
     public static void printEmptyLines(int lines) {

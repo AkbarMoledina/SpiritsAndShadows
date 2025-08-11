@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="SpiritsAndShadows:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/SpiritsAndShadows_jar</output-path>
+    <root id="archive" name="SpiritsAndShadows.jar">
+      <element id="module-output" name="Spirits and Shadows" />
+    </root>
+  </artifact>
+</component>

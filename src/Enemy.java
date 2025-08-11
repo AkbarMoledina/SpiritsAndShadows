@@ -39,8 +39,8 @@ public class Enemy {
 
     public void displayStats() {
         System.out.println("Enemy: " + name);
-        System.out.println("HP: " + currentHP + "/" + maxHP);
-        System.out.println("Mana: " + currentMana + "/" + maxMana);
+        System.out.printf("HP: %.2f/%.2f\n", currentHP, maxHP);
+        System.out.printf("Mana: %.2f/%.2f\n", currentMana, maxMana);
     }
 
     public void addEffect(SpellEffect effect) {
@@ -51,8 +51,19 @@ public class Enemy {
         Iterator<SpellEffect> iterator = activeEffects.iterator();
         while (iterator.hasNext()) {
             SpellEffect effect = iterator.next();
-            effect.reduceDuration();
-            if (effect.isExpired()) {
+            if (effect.getType() == SpellEffect.spellEffect.HP_CHANGE || effect.getType() == SpellEffect.spellEffect.SELF_HP_CHANGE) {
+                changeHP(effect.getValue());
+                if (effect.getValue() >= 0) {
+                    System.out.printf("The enemy healed %.2f health\n", effect.getValue());
+                } else { System.out.printf("The enemy took %.2f damage\n", effect.getValue()); }
+            }
+            else if (effect.getType() == SpellEffect.spellEffect.MANA_CHANGE || effect.getType() == SpellEffect.spellEffect.SELF_MANA_CHANGE) {
+                changeMana(effect.getValue());
+                if (effect.getValue() >= 0) {
+                    System.out.printf("The enemy restored %.2f mana\n", effect.getValue());
+                } else { System.out.printf("The enemy lost %.2f mana\n", effect.getValue()); }
+            }
+            if (effect.reduceDuration()) {
                 System.out.println(effect.getType() + " has worn off");
                 iterator.remove();
             }

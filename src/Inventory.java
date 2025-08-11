@@ -61,7 +61,6 @@ public class Inventory {
                 System.out.println("Name: " + weapon.getName());
                 System.out.println("Basic attack damage: " + weapon.getBasicDmg());
                 System.out.println("Spell damage: " + weapon.getSpellDmg());
-                System.out.println();
                 break;
             }
         }

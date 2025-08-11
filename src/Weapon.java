@@ -2,18 +2,17 @@ public class Weapon extends Item {
 
     private double basicDmg;
     private double spellDmg;
-//    private int range;
+    // maybe add something to reduce mana costs
 
     public Weapon(String name, double basicDmg, double spellDmg) {
         super(name);
         this.basicDmg = basicDmg;
         this.spellDmg = spellDmg;
-//        this.range = range;
     }
 
     @Override
     public String toString() {
-        return "Name: " + getName() + ", Basic attack damage: " + getBasicDmg() + ", Spell damage: " + getSpellDmg();
+        return "Weapon: " + getName() + ", Basic attack multiplier: " + getBasicDmg() + ", Spell damage multiplier: " + getSpellDmg();
     }
 
     public double getBasicDmg() {

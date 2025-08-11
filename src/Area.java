@@ -39,7 +39,8 @@ public class Area {
     public void options() {
 
         int option = 1;
-        for (String dir : exits.keySet()) {
+        for (String dir : exits
+                .keySet()) {
             System.out.println(option +". Go " + dir);
             option++;
         }

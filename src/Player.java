@@ -10,7 +10,7 @@ public class Player {
     private double maxMana;
     private double currentHP;
     private double currentMana;
-    private double attackspeed;
+    private double basicAtkDmg;
     private Spell basicAttack;
     private List<Spell> knownSpells;
     private static final int MAX_SPELLS = 5;
@@ -23,7 +23,7 @@ public class Player {
         setBaseStats(charClass);
         this.currentHP = this.maxHP;
         this.currentMana = this.maxMana;
-        this.basicAttack = new Spell("Basic attack", "An attack with no cooldown which deals damage based on your attack speed.", 20 * attackspeed, 0, 0, 95, 0, null, null);
+        this.basicAttack = new Spell("Basic attack", "An attack with no cooldown which deals damage based on your attack speed.", 20 * basicAtkDmg, 0, 0, 95, 0, null, null);
         this.knownSpells = new ArrayList<>();
         setStartingAbilities();
     }
@@ -31,19 +31,19 @@ public class Player {
     private void setBaseStats(String charClass) {
         switch (charClass.toLowerCase()) {
             case "battlemage":
-                maxHP = 200;
-                maxMana = 100;
-                attackspeed = 2;
+                maxHP = 250;
+                maxMana = 150;
+                basicAtkDmg = 2;
                 break;
             case "spellcaster":
-                maxHP = 150;
-                maxMana = 200;
-                attackspeed = 1.2;
+                maxHP = 200;
+                maxMana = 250;
+                basicAtkDmg = 1.2;
                 break;
             case "utility":
-                maxHP = 100;
-                maxMana = 300;
-                attackspeed = 1;
+                maxHP = 150;
+                maxMana = 350;
+                basicAtkDmg = 1;
                 break;
         }
     }
@@ -52,7 +52,7 @@ public class Player {
 
         Spell iceSpike = new Spell("Ice spike", "Launch a low mana cost but inaccurate spear of ice.", 50, 0, 1, 65, 10, Spell.spellType.ICE, null);
 
-        List<SpellEffect> flameboltEffects = List.of(new SpellEffect(SpellEffect.spellEffect.DOT, 10, 2, 30));
+        List<SpellEffect> flameboltEffects = List.of(new SpellEffect(SpellEffect.spellEffect.HP_CHANGE, -10, 2, 30));
         Spell flamebolt = new Spell("Flamebolt", "A blast of fire with a chance to burn, that also deals a small amount of percent health damage.", 25, 5, 2, 90, 30, Spell.spellType.PYRO, flameboltEffects);
 
         knownSpells.add(iceSpike);
@@ -66,7 +66,7 @@ public class Player {
         do {
             System.out.println("Hello there, what is your name?");
             name = GameLogic.scanner.nextLine();
-            System.out.printf("Ah, so you're %s! Is that correct?\n1. Yes\n2. No\n", name);
+            System.out.printf("\nAh, so you're %s! Is that correct?\n1. Yes\n2. No\n", name);
             nameOption = GameLogic.promptAndReadInt(2);
 
         } while (nameOption == 2);
@@ -76,8 +76,7 @@ public class Player {
     public static String askClass() {
         String charClass = "";
         int charClassOption;
-        GameLogic.printEmptyLines(1);
-        System.out.println("What class are you?\n1. Battlemage\n2. Spellcaster\n3. Utility\n");
+        System.out.println("What class are you?\n1. Battlemage\n2. Spellcaster\n3. Utility");
         charClassOption = GameLogic.promptAndReadInt(3);
         switch (charClassOption) {
             case 1:
@@ -144,8 +143,8 @@ public class Player {
 
     public void displayStats() {
         System.out.println("Player: " + name);
-        System.out.println("HP: " + currentHP + "/" + maxHP);
-        System.out.println("Mana: " + currentMana + "/" + maxMana);
+        System.out.printf("HP: %.2f/%.2f\n", currentHP, maxHP);
+        System.out.printf("Mana: %.2f/%.2f\n", currentMana, maxMana);
     }
 
     public void addEffect(SpellEffect effect) {
@@ -156,14 +155,25 @@ public class Player {
         Iterator<SpellEffect> iterator = activeEffects.iterator();
         while (iterator.hasNext()) {
             SpellEffect effect = iterator.next();
-            effect.reduceDuration();
-            if (effect.isExpired()) {
+            if (effect.getType() == SpellEffect.spellEffect.HP_CHANGE || effect.getType() == SpellEffect.spellEffect.SELF_HP_CHANGE) {
+                changeHP(effect.getValue());
+                if (effect.getValue() >= 0) {
+                    System.out.printf("You healed %.2f health\n", effect.getValue());
+                } else { System.out.printf("You took %.2f damage\n", effect.getValue());}
+            }
+            else if (effect.getType() == SpellEffect.spellEffect.MANA_CHANGE || effect.getType() == SpellEffect.spellEffect.SELF_MANA_CHANGE) {
+                changeMana(effect.getValue());
+                if (effect.getValue() >= 0) {
+                    System.out.printf("You restored %.2f mana\n", effect.getValue());
+                } else { System.out.printf("You lost %.2f mana\n", effect.getValue()); }
+            }
+            if (effect.reduceDuration()) {
                 System.out.println(effect.getType() + " has worn off");
                 iterator.remove();
             }
         }
     }
-
+    
     public boolean hasEffect(SpellEffect.spellEffect type) {
         for (SpellEffect effect : activeEffects) {
             if (effect.getType() == type) {

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 public class Spell{
@@ -33,17 +34,28 @@ public class Spell{
 
     public double calculateDamageToEnemy(Player player, Enemy enemy) {
         if (!player.hasEffect(SpellEffect.spellEffect.STUN)) {
-            double dmgModification = enemy.getEffectValue(SpellEffect.spellEffect.DMG_MOD) * player.getEffectValue(SpellEffect.spellEffect.SPELL_DMG);
-            double manaModification = player.getEffectValue(SpellEffect.spellEffect.MANA_COST_MOD);
+
+            Inventory inventory = Inventory.getInstance();
+            double weaponModifier = 1;
+
+            if (Objects.equals(name, "Basic attack")) {
+                weaponModifier = inventory.getWeapon().getBasicDmg();
+            } else { weaponModifier = inventory.getWeapon().getSpellDmg(); }
+
+            double dmgModification = modifier(enemy.getEffectValue(SpellEffect.spellEffect.SELF_INCOMING_DMG_MOD)) * modifier(player.getEffectValue(SpellEffect.spellEffect.SELF_SPELL_DMG)) * weaponModifier;
+            double manaModification = modifier(player.getEffectValue(SpellEffect.spellEffect.SELF_MANA_COST_MOD));
             player.changeMana(-manaCost * manaModification);
 
             Random rand = new Random();
             if (rand.nextDouble() * 100 < accuracy) {
-                double damageDealt = damage + (enemy.getMaxHP() * (percentageDamage / 100)) * dmgModification;
+                double damageDealt = damage * dmgModification + (enemy.getMaxHP() * (percentageDamage / 100));
                 enemy.changeHP(-damageDealt);
                 for (SpellEffect effect : effects) {
-                    enemy.addEffect(effect);
+                    if (effect.getType() == SpellEffect.spellEffect.HP_CHANGE || effect.getType() == SpellEffect.spellEffect.MANA_CHANGE || effect.getType() == SpellEffect.spellEffect.STUN) {
+                        enemy.addEffect(effect);
+                    } else { player.addEffect(effect); }
                 }
+                System.out.printf("Your %s did %.2f damage!\n", name, damageDealt);
                 return damageDealt;
             } else {
                 System.out.println("Your attack missed");
@@ -56,17 +68,21 @@ public class Spell{
 
     public double calculateDamageToPlayer(Player player, Enemy enemy) {
         if (!enemy.hasEffect(SpellEffect.spellEffect.STUN)) {
-            double dmgModification = player.getEffectValue(SpellEffect.spellEffect.DMG_MOD) * enemy.getEffectValue(SpellEffect.spellEffect.SPELL_DMG);
-            double manaModification = enemy.getEffectValue(SpellEffect.spellEffect.MANA_COST_MOD);
+            // set these to 1 when there's no active modifier (check if there's a cleaner way later)
+            double dmgModification = modifier(player.getEffectValue(SpellEffect.spellEffect.SELF_INCOMING_DMG_MOD)) * modifier(enemy.getEffectValue(SpellEffect.spellEffect.SELF_SPELL_DMG));
+            double manaModification = modifier(enemy.getEffectValue(SpellEffect.spellEffect.SELF_MANA_COST_MOD));
             enemy.changeMana(-manaCost * manaModification);
 
             Random rand = new Random();
             if (rand.nextDouble() * 100 < accuracy) {
-                double damageDealt = damage + (player.getMaxHP() * (percentageDamage / 100)) * dmgModification;
+                double damageDealt = damage * dmgModification + (player.getMaxHP() * (percentageDamage / 100));
                 player.changeHP(-damageDealt);
                 for (SpellEffect effect : effects) {
-                    player.addEffect(effect);
+                    if (effect.getType() == SpellEffect.spellEffect.HP_CHANGE || effect.getType() == SpellEffect.spellEffect.MANA_CHANGE || effect.getType() == SpellEffect.spellEffect.STUN) {
+                        player.addEffect(effect);
+                    } else { enemy.addEffect(effect); }
                 }
+                System.out.printf("The enemy's attack did %.2f damage to you!\n", damageDealt);
                 return damageDealt;
             } else {
                 System.out.println("The enemy's attack missed");
@@ -75,6 +91,10 @@ public class Spell{
         }
         System.out.println("The enemy is stunned");
         return 0;
+    }
+
+    public double modifier(double modifier) {
+        return modifier == 0 ? 1 : modifier;
     }
 
     public String getName() {
