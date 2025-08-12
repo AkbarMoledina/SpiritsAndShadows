@@ -6,7 +6,7 @@ public class GameLogic {
 
 
     public static Player startGame() {
-        GameLogic.printHeading("TEXT RPG");
+        GameLogic.printHeading("SPIRITS AND SHADOWS");
         String name = Player.askName();
         String charClass = Player.askClass();
 

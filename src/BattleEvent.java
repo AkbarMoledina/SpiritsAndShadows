@@ -9,7 +9,6 @@ public class BattleEvent implements Event {
 
     @Override
     public void trigger(Player player, Area area) {
-        System.out.println("Battle");
         battle.startBattle(player, enemy);
 
     }

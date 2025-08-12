@@ -92,7 +92,7 @@ public class Area {
                         System.out.println("You searched the room but found nothing...");
                     }
                 } else {
-                    System.out.println("You don't have enough mana. You need a nap.");
+                    System.out.println("You don't have enough mana.");
                 }
                 return this;
             }
@@ -121,7 +121,7 @@ public class Area {
     }
 
 
-    private void takeItem(Item item) {
+    public void takeItem(Item item) {
         System.out.println("You found a " + item.getName() + "!\n" + item);
         if (item instanceof Weapon) {
             System.out.println("Would you like to drop your current weapon and pick up the " + item.getName() + "?\n1. Yes\n2. No");
