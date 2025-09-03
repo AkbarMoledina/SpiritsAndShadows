@@ -10,6 +10,7 @@ public class Enemy {
     private double currentHP;
     private double currentMana;
     private Spell basicAttack;
+    private List<Spell> knownSpells;
     private List<SpellEffect> activeEffects = new ArrayList<>();
 
     public enum enemyType {
@@ -23,6 +24,7 @@ public class Enemy {
         this.maxMana = maxMana;
         this.currentHP = maxHp;
         this.currentMana = maxMana;
+        this.knownSpells = new ArrayList<>();
     }
 
     public void changeHP(double amount) {
@@ -43,6 +45,10 @@ public class Enemy {
         System.out.printf("Mana: %.2f/%.2f\n", currentMana, maxMana);
     }
 
+    public void addSpell(Spell spell) {
+        knownSpells.add(spell);
+    }
+
     public void addEffect(SpellEffect effect) {
         activeEffects.add(effect);
     }
@@ -55,7 +61,7 @@ public class Enemy {
                 changeHP(effect.getValue());
                 if (effect.getValue() >= 0) {
                     System.out.printf("The enemy healed %.2f health\n", effect.getValue());
-                } else { System.out.printf("The enemy took %.2f damage\n", effect.getValue()); }
+                } else { System.out.printf("The enemy took %.2f damage\n", -effect.getValue()); }
             }
             else if (effect.getType() == SpellEffect.spellEffect.MANA_CHANGE || effect.getType() == SpellEffect.spellEffect.SELF_MANA_CHANGE) {
                 changeMana(effect.getValue());
@@ -64,7 +70,7 @@ public class Enemy {
                 } else { System.out.printf("The enemy lost %.2f mana\n", effect.getValue()); }
             }
             if (effect.reduceDuration()) {
-                System.out.println(effect.getType() + " has worn off");
+                effect.wornOffMessages(false);
                 iterator.remove();
             }
         }
@@ -119,5 +125,9 @@ public class Enemy {
 
     public Spell getBasicAttack() {
         return basicAttack;
+    }
+
+    public List<Spell> getKnownSpells() {
+        return knownSpells;
     }
 }

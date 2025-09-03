@@ -1,4 +1,5 @@
 import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
 
 public class GameLogic {
 
@@ -62,6 +63,11 @@ public class GameLogic {
     public static boolean checkAlive(Player player) {
         if (player.getCurrentHP() <= 0) {
             System.out.println("\nYou have died...");
+            try {
+                TimeUnit.SECONDS.sleep(3);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             return false;
         }
         return true;

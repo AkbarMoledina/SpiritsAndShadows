@@ -6,7 +6,7 @@ public class Battle {
 
     public void startBattle(Player player, Enemy enemy) {
         boolean isBattling = true;
-        Spell basicAttack = new Spell("Basic attack","The enemy's basic attack",30,0,0,95,0,null, null);
+        Spell basicAttack = new Spell("Basic attack","The enemy's basic attack",25,0,0,90,0,null, null);
         enemy.setBasicAttack(basicAttack);
         System.out.println("You are battling " + enemy.getName() + "\n");
 
@@ -24,7 +24,7 @@ public class Battle {
             enemy.getBasicAttack().calculateDamageToPlayer(player, enemy);
             player.updateEffects();
             enemy.updateEffects();
-            ///
+            System.out.println();
             isBattling = checkPlayerAndEnemyHP(player, enemy);
             if (!isBattling) break;
         }
@@ -37,7 +37,7 @@ public class Battle {
 
         for (Spell spell : player.getKnownSpells()) {
             if (player.getCurrentMana() >= spell.getManaCost()) {
-                System.out.printf("\n%d. " + spell.getName(), option);
+                System.out.printf("\n%d. " + spell.getName() + " (%s mana)", option, spell.getManaCost());
                 option++;
             }
         }

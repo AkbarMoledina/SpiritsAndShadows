@@ -48,21 +48,19 @@ public class Spell{
 
             Random rand = new Random();
             if (rand.nextDouble() * 100 < accuracy) {
-                double damageDealt = damage * dmgModification + (enemy.getMaxHP() * (percentageDamage / 100));
+                double damageDealt = (damage + (enemy.getMaxHP() * (percentageDamage / 100))) * dmgModification;
                 enemy.changeHP(-damageDealt);
-                for (SpellEffect effect : effects) {
-                    if (effect.getType() == SpellEffect.spellEffect.HP_CHANGE || effect.getType() == SpellEffect.spellEffect.MANA_CHANGE || effect.getType() == SpellEffect.spellEffect.STUN) {
-                        enemy.addEffect(effect);
-                    } else { player.addEffect(effect); }
-                }
                 System.out.printf("Your %s did %.2f damage!\n", name, damageDealt);
+                for (SpellEffect effect : effects) {
+                    if (rand.nextDouble() * 100 < effect.getChance()) { effect.applyPlayerSpellEffect(player, enemy ); }
+                }
                 return damageDealt;
             } else {
-                System.out.println("Your attack missed");
+                System.out.println("Your attack missed.");
                 return 0;
             }
         }
-        System.out.println("You are stunned");
+        System.out.println("You are stunned.");
         return 0;
     }
 
@@ -77,19 +75,17 @@ public class Spell{
             if (rand.nextDouble() * 100 < accuracy) {
                 double damageDealt = damage * dmgModification + (player.getMaxHP() * (percentageDamage / 100));
                 player.changeHP(-damageDealt);
-                for (SpellEffect effect : effects) {
-                    if (effect.getType() == SpellEffect.spellEffect.HP_CHANGE || effect.getType() == SpellEffect.spellEffect.MANA_CHANGE || effect.getType() == SpellEffect.spellEffect.STUN) {
-                        player.addEffect(effect);
-                    } else { enemy.addEffect(effect); }
-                }
                 System.out.printf("The enemy's attack did %.2f damage to you!\n", damageDealt);
+                for (SpellEffect effect : effects) {
+                    if (rand.nextDouble() * 100 < effect.getChance()) { effect.applyEnemySpellEffect(player, enemy ); }
+                }
                 return damageDealt;
             } else {
-                System.out.println("The enemy's attack missed");
+                System.out.println("The enemy's attack missed.");
                 return 0;
             }
         }
-        System.out.println("The enemy is stunned");
+        System.out.println("The enemy is stunned.");
         return 0;
     }
 

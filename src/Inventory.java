@@ -36,10 +36,7 @@ public class Inventory {
     }
 
     public void removeItem(Item item) {
-        if (items.contains(item)) {
-            items.remove(item);
-            System.out.println("You left behind your " + item.getName());
-        }
+        items.remove(item);
     }
 
     public void startingInventory() {
@@ -59,8 +56,8 @@ public class Inventory {
             if (item instanceof Weapon) {
                 Weapon weapon = (Weapon) item;
                 System.out.println("Name: " + weapon.getName());
-                System.out.println("Basic attack damage: " + weapon.getBasicDmg());
-                System.out.println("Spell damage: " + weapon.getSpellDmg());
+                System.out.println("Basic attack multiplier: " + weapon.getBasicDmg());
+                System.out.println("Spell multiplier: " + weapon.getSpellDmg());
                 break;
             }
         }

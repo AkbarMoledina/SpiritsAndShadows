@@ -1,23 +1,23 @@
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class Area {
     private final int x;
     private final int y;
     private boolean entered;
     private boolean searched;
-    private Item item;
     private String description;
-    private Map<String, Area> exits = new HashMap<>();
+    private Map<String, Area> exits = new LinkedHashMap<>();
     private Event enterEvent;
     private Event searchEvent;
 
-    public Area(int x, int y, Item item, String description) {
+    public Area(int x, int y, String description) {
         this.x = x;
         this.y = y;
         this.entered = false;
         this.searched = false;
-        this.item = item;
         this.description = description;
     }
 
@@ -122,24 +122,36 @@ public class Area {
 
 
     public void takeItem(Item item) {
-        System.out.println("You found a " + item.getName() + "!\n" + item);
-        if (item instanceof Weapon) {
-            System.out.println("Would you like to drop your current weapon and pick up the " + item.getName() + "?\n1. Yes\n2. No");
+        System.out.println("You found a " + item.getName() + "!");
+        Inventory inventory = Inventory.getInstance();
+        if ((Objects.equals(item.getName(), "Spellstaff") && Objects.equals(inventory.getWeapon().getName(), "Battlestaff")) || (Objects.equals(item.getName(), "Battlestaff") && Objects.equals(inventory.getWeapon().getName(), "Spellstaff"))) {
+            Weapon elderStaff = new Weapon("Elder staff", 2.0, 2.0);
+            inventory.removeItem(inventory.getWeapon());
+            inventory.addItem(elderStaff);
+            System.out.println("You feel a mysterious force pulling on your staff. You grip it tighter until you can hold on no longer and it is ripped from your hand.\nThe " + item.getName() + " and your staff fuse into one. You walk over and pick up the new staff and immediately feel incredible power flowing through you.\nYou are now in possession of the legendary Elder Staff!");
+            System.out.println("\n" + elderStaff.toString());
+            this.searched = true;
+        }
+        else if (item instanceof Weapon) {
+            System.out.println("\nNew " + item);
+            System.out.println("Current " + inventory.getWeapon().toString());
+            System.out.println("\nWould you like to drop your current weapon and pick up the " + item.getName() + "?\n1. Yes\n2. No");
             int option = GameLogic.promptAndReadInt(2);
             if (option == 1) {
-                Inventory inventory = Inventory.getInstance();
                 inventory.addItem(item);
+
                 Weapon oldWeapon = inventory.getWeapon();
-                this.item = oldWeapon;
-                this.searched = false;
+//                Event oldWeaponEvent = new ItemEvent(oldWeapon);
+
+                this.searched = true;
+                System.out.println();
+                System.out.println("You left behind your " + oldWeapon.getName() + " and picked up a " + item.getName());
                 inventory.removeItem(oldWeapon);
-                System.out.println("You picked up a " + item.getName());
             }
         } else {
             System.out.println("Would you like to pick up the " + item.getName() + "?\n1. Yes\n2. No");
             int option = GameLogic.promptAndReadInt(2);
             if (option == 1) {
-                Inventory inventory = Inventory.getInstance();
                 inventory.addItem(item);
             }
         }

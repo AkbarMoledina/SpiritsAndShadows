@@ -31,29 +31,29 @@ public class Player {
     private void setBaseStats(String charClass) {
         switch (charClass.toLowerCase()) {
             case "battlemage":
-                maxHP = 250;
-                maxMana = 150;
+                maxHP = 300;
+                maxMana = 200;
                 basicAtkDmg = 2;
                 break;
             case "spellcaster":
-                maxHP = 200;
-                maxMana = 250;
-                basicAtkDmg = 1.2;
+                maxHP = 250;
+                maxMana = 300;
+                basicAtkDmg = 1;
                 break;
             case "utility":
-                maxHP = 150;
-                maxMana = 350;
-                basicAtkDmg = 1;
+                maxHP = 200;
+                maxMana = 450;
+                basicAtkDmg = 0.8;
                 break;
         }
     }
 
     private void setStartingAbilities() {
 
-        Spell iceSpike = new Spell("Ice spike", "Launch a low mana cost but inaccurate spear of ice.", 50, 0, 1, 65, 10, Spell.spellType.ICE, null);
+        Spell iceSpike = new Spell("Ice spike", "Launch a low mana cost but inaccurate spear of ice.", 50, 0, 1, 70, 10, Spell.spellType.ICE, null);
 
-        List<SpellEffect> flameboltEffects = List.of(new SpellEffect(SpellEffect.spellEffect.HP_CHANGE, -10, 2, 30));
-        Spell flamebolt = new Spell("Flamebolt", "A blast of fire with a chance to burn, that also deals a small amount of percent health damage.", 25, 5, 2, 90, 30, Spell.spellType.PYRO, flameboltEffects);
+        List<SpellEffect> flameboltEffects = List.of(new SpellEffect(SpellEffect.spellEffect.HP_CHANGE, -10, 2, 50));
+        Spell flamebolt = new Spell("Flamebolt", "A blast of fire with a chance to burn, that also deals a small amount of percent health damage.", 25, 5, 2, 90, 25, Spell.spellType.PYRO, flameboltEffects);
 
         knownSpells.add(iceSpike);
         knownSpells.add(flamebolt);
@@ -109,8 +109,8 @@ public class Player {
                 if (choice != 6) {
                     System.out.println("Are you sure you'd like to forget " + knownSpells.get(choice - 1).getName() + " to learn " + newSpell.getName() + "?\n1. Yes\n2. No");
                     if (GameLogic.promptAndReadInt(2) == 1) {
+                        System.out.println("You forgot " + knownSpells.get(choice - 1).getName() + " and learnt " + newSpell.getName() + "!");
                         knownSpells.set(choice - 1, newSpell);
-                        System.out.println("You forgot " + knownSpells.get(choice -1).getName() + " and learnt " + newSpell.getName() + "!");
                         learningSpell = false;
                     }
                 }
@@ -159,7 +159,7 @@ public class Player {
                 changeHP(effect.getValue());
                 if (effect.getValue() >= 0) {
                     System.out.printf("You healed %.2f health\n", effect.getValue());
-                } else { System.out.printf("You took %.2f damage\n", effect.getValue());}
+                } else { System.out.printf("You took %.2f damage\n", -effect.getValue());}
             }
             else if (effect.getType() == SpellEffect.spellEffect.MANA_CHANGE || effect.getType() == SpellEffect.spellEffect.SELF_MANA_CHANGE) {
                 changeMana(effect.getValue());
@@ -168,7 +168,7 @@ public class Player {
                 } else { System.out.printf("You lost %.2f mana\n", effect.getValue()); }
             }
             if (effect.reduceDuration()) {
-                System.out.println(effect.getType() + " has worn off");
+                effect.wornOffMessages(true);
                 iterator.remove();
             }
         }
