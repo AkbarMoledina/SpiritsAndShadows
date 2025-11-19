@@ -19,9 +19,9 @@ Each spell can have multiple effects such as damage, healing, or buffs/debuffs, 
 - The battlemage class has stronger basic attacks but little mana to cast spells. The utility class has a massive mana pool for spells, but low basic attack damage and health. The spellcaster class has good mana and health but still fairly low basic attack damage.
 - Items can be found by searching the room (costing 20 mana per search). Each of the weapons will generally benefit either the basic attack or casting spells playstyle more, depending on the weapon. If you have enough mana, try to find both the best basic attack weapon and the best casting spells weapon and see what happens!
 
-
 ### 🔮 Spells
-Each spell defines:
+Spells are balanced over several factors. Ones with high flat damage will generally be strong against targets with low max HP, meanwhile high percentage damage will be stronger against enemies with a high HP pool. There are also several spell effects: damage over time, mana damage, stun, self damage/heal over time, self damage modification, self mana restore, self mana cost modification, self spell damage modifiction, self effect immunity.
+
 - `damage` — base power
 - `percentageDamage` — scaling factor based on the caster’s stats
 - `cooldown` — the number of turns the caster has to wait before using the spell again
