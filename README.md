@@ -6,7 +6,7 @@ A small turn-based RPG written in **Java**, featuring elemental magic, area expl
 
 ## 🌍 Overview
 
-In this game, the player explores a **4x4 world grid**, encounters enemies, and uses spells and weapons to battle through themed regions — each aligned to an elemental type.
+In this game, the player explores a **4x4 world grid**, encounters enemies, and uses spells and weapons to battle through elementally themed regions.
 
 Each spell can have multiple effects such as damage, healing, or buffs/debuffs, allowing for rich combinations and strategic gameplay.
 
@@ -15,8 +15,10 @@ Each spell can have multiple effects such as damage, healing, or buffs/debuffs, 
 ## 🧱 Core Systems
 
 ### 🧙‍♂️ Player
-- The player has health, mana, basic attack multipliers and spell multipliers based on class, weapons and spell buffs/debuffs.
-- The player can equip weapons, cast spells, and use items.
+- The player has health, mana, basic attack multipliers and spell multipliers based on chosen class, weapons and spell buffs/debuffs.
+- The battlemage class has stronger basic attacks but little mana to cast spells. The utility class has a massive mana pool for spells, but low basic attack damage and health. The spellcaster class has good mana and health but still fairly low basic attack damage.
+- Items can be found by searching the room (costing 20 mana per search). Each of the weapons will generally benefit either the basic attack or casting spells playstyle more, depending on the weapon. If you have enough mana, try to find both the best basic attack weapon and the best casting spells weapon and see what happens!
+
 
 ### 🔮 Spells
 Each spell defines:
